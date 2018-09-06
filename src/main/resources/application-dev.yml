@@ -1,0 +1,38 @@
+debug: false
+spring:
+  datasource:
+    druid:
+      web-stat-filter:
+        enabled: true
+        exclusions: "*.js,*.gif,*.jpg,*.png,*.css,*.ico,/druid/*"
+        url-pattern: "/*"
+      stat-view-servlet:
+        login-username: admin
+        login-password: adminto
+      username: root
+      password: adminto
+      url: jdbc:mysql://127.0.0.1:3306/spring-transactional-guides?useUnicode=true&characterEncoding=utf8&useSSL=false
+      db-type: com.alibaba.druid.pool.DruidDataSource
+      driver-class-name: com.mysql.jdbc.Driver
+      filter:
+        stat:
+          enabled: true
+          db-type: mysql
+          log-slow-sql: true
+          slow-sql-millis: 2000
+        wall:
+          enabled: true
+          db-type: mysql
+          config:
+            delete-allow: true
+            drop-table-allow: true
+            multi-statement-allow: true
+        log4j2:
+          enabled: true
+          statement-executable-sql-log-enable: true
+
+logging:
+  config: classpath:log4j2-spring.xml
+
+server:
+  port: 8888

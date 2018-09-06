@@ -1,0 +1,140 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<!-- log4j2使用说明：
+    使用方式如下： private static final Logger logger = LogManager.getLogger(实际类名.class.getName());
+	2、日志说明：
+	    （1）请根据实际情况配置各项参数
+	    （2）需要注意日志文件备份数和日志文件大小，注意预留目录空间
+	    （3）实际部署的时候backupFilePatch变量需要修改成linux目录 -->
+<configuration status="error">
+    <Properties>
+        <!-- 定义日志文件名称 -->
+        <Property name="fileName">info.log</Property>
+        <!-- 定义日志文件存放位置 -->
+        <Property name="backupFilePatch">kxtx/</Property>
+
+    </Properties>
+
+    <!--先定义所有的appender -->
+    <appenders>
+
+        <!--这个输出控制台的配置 -->
+        <Console name="Console" target="SYSTEM_OUT">
+            <!--输出日志的格式 -->
+            <PatternLayout
+                    pattern="%d{HH:mm:ss.SSS} %-5level %class{36} %L %M - %msg%xEx%n"/>
+        </Console>
+
+        <!--文件会打印出所有信息，这个log每次运行程序会自动清空，由append属性决定，这个也挺有用的，适合临时测试用 -->
+        <File name="log"
+              fileName="${backupFilePatch}/test/${date:yyyy-MM-dd}/test-log.log"
+              append="false">
+            <PatternLayout
+                    pattern="%d{HH:mm:ss.SSS} %-5level %class{36} %L %M - %msg%xEx%n"/>
+        </File>
+
+        <File name="error"
+              fileName="${backupFilePatch}/error/${date:yyyy-MM-dd}/error-log.log"
+              append="false">
+            <ThresholdFilter level="error" onMatch="ACCEPT"
+                             onMismatch="DENY"/>
+            <PatternLayout
+                    pattern="%d{yyyy.MM.dd 'at' HH:mm:ss z} %-5level %class{36} %L %M - %msg%xEx%n"/>
+        </File>
+
+        <File name="debug"
+              fileName="${backupFilePatch}/debug/${date:yyyy-MM-dd}/debug-log.log"
+              append="false">
+            <ThresholdFilter level="debug" onMatch="ACCEPT"
+                             onMismatch="DENY"/>
+            <PatternLayout
+                    pattern="%d{yyyy.MM.dd 'at' HH:mm:ss z} %-5level %class{36} %L %M - %msg%xEx%n"/>
+        </File>
+
+        <File name="warn"
+              fileName="${backupFilePatch}/warn/${date:yyyy-MM-dd}/warn-log.log"
+              append="false">
+            <ThresholdFilter level="warn" onMatch="ACCEPT"
+                             onMismatch="DENY"/>
+            <PatternLayout
+                    pattern="%d{yyyy.MM.dd 'at' HH:mm:ss z} %-5level %class{36} %L %M - %msg%xEx%n"/>
+        </File>
+
+        <File name="info"
+              fileName="${backupFilePatch}/info/${date:yyyy-MM-dd}/info-log.log"
+              append="false">
+            <ThresholdFilter level="info" onMatch="ACCEPT"
+                             onMismatch="DENY"/>
+            <PatternLayout
+                    pattern="%d{yyyy.MM.dd 'at' HH:mm:ss z} %-5level %class{36} %L %M - %msg%xEx%n"/>
+        </File>
+        <File name="trace"
+              fileName="${backupFilePatch}/trace/${date:yyyy-MM-dd}/trace-log.log"
+              append="false">
+            <ThresholdFilter level="trace" onMatch="ACCEPT"
+                             onMismatch="DENY"/>
+            <PatternLayout
+                    pattern="%d{yyyy.MM.dd 'at' HH:mm:ss z} %-5level %class{36} %L %M - %msg%xEx%n"/>
+        </File>
+
+        <!--这个会打印出所有的信息，每次大小超过size，则这size大小的日志会自动存入按年份-月份建立的文件夹下面并进行压缩，作为存档 -->
+        <RollingFile name="RollingFile" fileName="${backupFilePatch}${fileName}"
+                     filePattern="${backupFilePatch}$${date:yyyy-MM}/app-%d{yyyyMMddHHmmssSSS}.log.gz">
+            <PatternLayout
+                    pattern="%d{yyyy.MM.dd 'at' HH:mm:ss.SSS z} %-5level %class{36} %L %M - %msg%xEx%n"/>
+            <!-- 日志文件大小 -->
+            <SizeBasedTriggeringPolicy size="20MB"/>
+            <!-- 最多保留文件数 -->
+            <DefaultRolloverStrategy max="20"/>
+        </RollingFile>
+    </appenders>
+
+    <!--然后定义logger，只有定义了logger并引入的appender，appender才会生效 -->
+    <loggers>
+        <!--建立一个默认的root的logger -->
+        <!-- 		<Logger name="com.github.ljmatlight" level="trace" additivity="true">
+                    <AppenderRef ref="RollingFile" />
+                    <appender-ref ref="warn" />
+                    <appender-ref ref="error" />
+                    <appender-ref ref="debug" />
+                    <appender-ref ref="info" />
+                    <appender-ref ref="trace" />
+                    <appender-ref ref="log" />
+                    <AppenderRef ref="Console" />
+                </Logger> -->
+
+        <!-- 全局配置 -->
+        <Root>
+            <AppenderRef ref="Console"/>
+            <!--<AppenderRef ref="RollingFile"/>-->
+        </Root>
+
+        <Logger name="org.apache.catalina.startup.DigesterFactory" level="error"/>
+        <Logger name="org.apache.catalina.util.LifecycleBase" level="error"/>
+        <Logger name="org.apache.coyote.http11.Http11NioProtocol" level="warn"/>
+        <logger name="org.apache.sshd.common.util.SecurityUtils" level="warn"/>
+        <Logger name="org.apache.tomcat.util.net.NioSelectorPool" level="warn"/>
+        <Logger name="org.crsh.plugin" level="warn"/>
+        <Logger name="org.crsh.ssh" level="warn"/>
+        <Logger name="org.hibernate.validator.internal.util.Version" level="warn"/>
+        <Logger name="org.springframework.boot.actuate.endpoint.jmx" level="warn"/>
+        <Logger name="org.thymeleaf" level="warn"/>
+
+        <Logger name="org.springframework.boot" level="info" additivity="false">
+            <AppenderRef ref="Console"/>
+        </Logger>
+
+        <Logger name="org.galsang" level="info" additivity="false">
+            <AppenderRef ref="Console"/>
+        </Logger>
+
+        <!-- druid配置 -->
+        <logger name="druid.sql.Statement" level="debug" additivity="false">
+            <appender-ref ref="Console"/>
+        </logger>
+        <logger name="druid.sql.ResultSet" level="debug" additivity="false">
+            <appender-ref ref="Console"/>
+        </logger>
+
+
+    </loggers>
+</configuration>
